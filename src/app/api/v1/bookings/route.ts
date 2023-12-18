@@ -7,8 +7,7 @@ import { Prisma } from "@prisma/client";
 const createBookingSchema = z.object({
   quantity: z.number().int(),
   totalPrice: z.number().int(),
-  startDate: z.date(),
-  endDate: z.date(),
+  date: z.date(),
   todoId: z.string(),
   userId: z.string()
 })
@@ -23,8 +22,7 @@ export async function POST(request: NextRequest) {
     const {
       quantity,
       totalPrice,
-      startDate,
-      endDate,
+      date,
       todoId,
       userId
     } = validation.data
@@ -42,8 +40,7 @@ export async function POST(request: NextRequest) {
       data: {
         quantity,
         totalPrice,
-        startDate,
-        endDate,
+        date,
         todoId: todo.id,
         userId: user.id
       }

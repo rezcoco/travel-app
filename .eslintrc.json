@@ -2,7 +2,6 @@
   "extends": [
     "next/core-web-vitals",
     "plugin:tailwindcss/recommended",
-    "prettier",
-    "plugin:@tanstack/eslint-plugin-query/recommended"
+    "prettier"
   ]
 }
