@@ -1,0 +1,1 @@
+// export type ExtractArrayOfObjectKeys<T extends Record<PropertyKey, any>[]> = [K in T[number]]: T
