@@ -5,7 +5,8 @@ import { PrismaAdapter } from "@auth/prisma-adapter"
 import prisma from "./prisma"
 import bcrypt from "bcrypt"
 
-const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
+const useSecureCookies = process.env.NEXTAUTH_URL?.startsWith("https://")
+const cookiePrefix = useSecureCookies ? "__Secure-" : ""
 
 export const authConfig: AuthOptions = {
   pages: {
@@ -91,16 +92,13 @@ export const authConfig: AuthOptions = {
   },
   cookies: {
     sessionToken: {
-      name: `${VERCEL_DEPLOYMENT ? "__Secure-" : ""}next-auth.session-token`,
+      name: `${cookiePrefix}next-auth.session-token`,
       options: {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
-        // When working on localhost, the cookie domain must be omitted entirely (https://stackoverflow.com/a/1188145)
-        domain: VERCEL_DEPLOYMENT
-          ? `.${process.env.NEXT_PUBLIC_APP_DOMAIN}`
-          : undefined,
-        secure: VERCEL_DEPLOYMENT,
+        domain: process.env.NEXTAUTH_URL,
+        secure: useSecureCookies
       },
     },
   }
