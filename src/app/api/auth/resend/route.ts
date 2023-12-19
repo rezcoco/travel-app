@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma"
-import { sendEmail } from "@/lib/mailer";
 import { emailConfirmation } from "@/components/email";
 import { generateToken } from "@/lib/token";
+import axios from "axios";
+
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
@@ -48,7 +51,17 @@ export async function POST(request: NextRequest) {
 
     const verifyUrl = `${process.env.NEXTAUTH_URL}/verify?token=${verificationToken}`
 
-    sendEmail(user.email, "Email Confirmation", emailConfirmation(user.fullName, verifyUrl))
+    await axios.post('https://api.resend.com/emails', {
+      from: "Go Out <noreply@goout.my.id>",
+      to: user.email,
+      subject: "Email Confirmation",
+      html: emailConfirmation(user.fullName, verifyUrl),
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+      },
+    });
 
     return NextResponse.json({ data: user })
   } catch (error: any) {
