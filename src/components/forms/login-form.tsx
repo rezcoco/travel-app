@@ -64,7 +64,6 @@ const LoginForm = () => {
       const res = await signIn("credentials", {
         email: values.email,
         password: values.password,
-        redirect: false,
         callbackUrl: callbackUrl ? callbackUrl : "/",
       })
 
