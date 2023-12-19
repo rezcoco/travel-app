@@ -4,9 +4,6 @@ import { emailConfirmation } from "@/components/email";
 import { generateToken } from "@/lib/token";
 import axios from "axios";
 
-export const runtime = 'edge';
-export const dynamic = 'force-dynamic';
-
 export async function POST(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
   const token = searchParams.get("token")
