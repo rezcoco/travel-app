@@ -79,8 +79,6 @@ const LoginForm = () => {
           return toast("Something went wrong!", { type: "error" })
         }
       }
-
-      router.replace("/")
     } catch (error: any) {
       console.log(error.message)
       return toast(error.message)
