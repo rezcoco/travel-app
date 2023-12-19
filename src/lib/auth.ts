@@ -81,6 +81,12 @@ export const authConfig: AuthOptions = {
       }
 
       return session
+    },
+    async redirect({ url, baseUrl }) {
+      if (url === process.env.APP_SUBDOMAIN) {
+        return Promise.resolve(url)
+      }
+      return Promise.resolve(baseUrl)
     }
   },
   cookies: {
