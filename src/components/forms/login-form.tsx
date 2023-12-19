@@ -12,6 +12,7 @@ import { toast } from "react-toastify"
 import { z } from "zod"
 import Input from "../inputs/input"
 import { cn } from "@/lib/utils"
+import { useSearchParams } from "next/navigation"
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email is required").email(),
@@ -29,6 +30,7 @@ type LoginSchemaType = z.infer<typeof loginSchema>
 
 const LoginForm = () => {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isGoogleLoading, setIsGoogleLoading] = React.useState(false)
   const {
     register,
@@ -56,12 +58,14 @@ const LoginForm = () => {
 
   async function handleLoginCredentials(values: LoginSchemaType) {
     try {
+      const callbackUrl = searchParams.get("callbackUrl")
       await new Promise((resolve) => setTimeout(resolve, 3000))
 
       const res = await signIn("credentials", {
         email: values.email,
         password: values.password,
         redirect: false,
+        callbackUrl: callbackUrl ? callbackUrl : "/",
       })
 
       if (res?.error) {
