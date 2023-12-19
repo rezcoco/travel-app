@@ -20,7 +20,24 @@ export async function POST(request: NextRequest) {
     if (!user) throw new Error("user by token not found")
 
     if (user.emailVerified) {
-      await prisma.verificationToken.delete({ where: { token } })
+      await prisma.$transaction([
+        prisma.verificationToken.findUnique({
+          where: {
+            identifier_token: {
+              token,
+              identifier: user.email
+            }
+          }
+        }),
+        prisma.verificationToken.delete({
+          where: {
+            identifier_token: {
+              token,
+              identifier: user.email
+            }
+          }
+        })
+      ])
       return new NextResponse("Email already verified", { status: 400 })
     }
 
@@ -37,9 +54,24 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    await prisma.verificationToken.delete({
-      where: { token }
-    })
+    await prisma.$transaction([
+      prisma.verificationToken.findUnique({
+        where: {
+          identifier_token: {
+            token,
+            identifier: user.email
+          }
+        }
+      }),
+      prisma.verificationToken.delete({
+        where: {
+          identifier_token: {
+            token,
+            identifier: user.email
+          }
+        }
+      })
+    ])
 
     return NextResponse.json({ data: user })
   } catch (error: any) {

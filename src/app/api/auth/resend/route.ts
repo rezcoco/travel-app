@@ -41,7 +41,10 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    await prisma.session.delete({ where: { sessionToken: session.sessionToken } })
+    await prisma.$transaction([
+      prisma.session.findUnique({ where: { sessionToken: token } }),
+      prisma.session.delete({ where: { sessionToken: token } })
+    ])
 
     const verifyUrl = `${process.env.NEXTAUTH_URL}/verify?token=${verificationToken}`
 
